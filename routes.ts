@@ -5,7 +5,8 @@
  */
 
 export const publicRoutes = [
-    "/"
+    "/",
+    "/auth/new-verification"
 ]
 /**
  * An Array of routes that are used for authentication

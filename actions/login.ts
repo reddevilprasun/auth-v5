@@ -3,6 +3,7 @@ import * as z from "zod";
 import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
 import { LoginSchema } from "@/schemas";
+import { sendVarificationEmail } from "@/lib/mail";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { genarateVerificationToken } from "@/lib/token";
 import { getUserByEmail } from "@/data/user";
@@ -19,6 +20,10 @@ export const login = async(values: z.infer<typeof LoginSchema>) => {
     if(!existingUser.emailVerified){
         // Generate a new token and send it to the user's email address
         const verificationToken = genarateVerificationToken(existingUser.email);
+        await sendVarificationEmail(
+             (await verificationToken).email,
+             (await verificationToken).token,
+        );
         return {success: "Confirmation email sent!"}
         
     }
