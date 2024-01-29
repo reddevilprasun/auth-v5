@@ -15,6 +15,7 @@ export const NewVerificationForm = () => {
     const token = searchParams.get("token")
 
     const onSubmit = useCallback(() => {
+        if (success || error) return;
         if (!token) {
             setError("Missing Token!");
             return;
@@ -27,7 +28,7 @@ export const NewVerificationForm = () => {
             .catch(() => {
                 setError("An error occurred while processing your request.")
             })
-    }, [token])
+    }, [token, success, error])
     useEffect(() => {
         onSubmit();
     }
@@ -44,7 +45,10 @@ export const NewVerificationForm = () => {
                     <BeatLoader />
                 )}
                 <FromSuccess message={success} />
-                <FromError message={error} />
+                {!success && (
+
+                    <FromError message={error} />
+                )}
             </div>
         </CardWrapper>
     )
