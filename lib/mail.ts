@@ -23,3 +23,14 @@ export const sendVarificationEmail = async (email:string,token:string) => {
     html:`<h2>Click <a href="${confirmLink}"> here </a> to confirm email.</h2>`
   })
 }
+
+export const sendTwoFactorTokenEmail =async (email:string,token:string) => {
+  
+
+  await resend.emails.send({
+    from:"onboarding@resend.dev",
+    to:email,
+    subject:"Two Factor Authentication - Please enter this code.",
+    text:`Hello,\n\nThis is your two factor authentication code ${token}.`
+  })
+}

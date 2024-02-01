@@ -15,7 +15,8 @@ export const LoginSchema = z.object({
     }),
     password: z.string().min(4,{
         message:"Password must be at least 4 characters long"
-    })
+    }),
+    code: z.optional(z.string()),
 });
 export const RegisterSchema = z.object({
     email: z.string().email({
