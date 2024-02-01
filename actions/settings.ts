@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import { SettingsSchema } from "@/schemas";
 import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
-import { validate } from "uuid";
 
 export const settings = async (
     values: z.infer<typeof SettingsSchema>
@@ -18,6 +17,12 @@ export const settings = async (
     const dbUser = await getUserById(user.id);
     if(!dbUser){
         return {error : "Unauthorized!"}
+    }
+    if(user.isOAuth){
+        values.email = undefined;
+        values.password = undefined;
+        values.newPassword = undefined;
+        values.isTwoFactorEnabled = undefined;
     }
 
     await db.user.update({

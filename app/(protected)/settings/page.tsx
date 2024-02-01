@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useTransition, useState } from "react";
 import { settings } from "@/actions/settings";
 import { Button } from "@/components/ui/button";
-
+import { Switch } from "@/components/ui/switch";
 import { SettingsSchema } from "@/schemas";
 import {
     Card,
@@ -51,7 +51,8 @@ const SettingsPage = () => {
             password: undefined,
             name: user?.name || undefined,
             email: user?.email || undefined,
-            role: user?.role || undefined
+            role: user?.role || undefined,
+            isTwoFactorEnabled: user?.isTwoFactorEnabled || undefined,
         }
     })
     const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
@@ -104,66 +105,70 @@ const SettingsPage = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Eamil
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="example@gmail.com"
-                                                disabled={isSubmitting}
-                                                type="email"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Password
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="******"
-                                                disabled={isSubmitting}
-                                                type="password"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="newPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            New Password
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="******"
-                                                disabled={isSubmitting}
-                                                type="password"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            {user?.isOAuth === false && (
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Eamil
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="example@gmail.com"
+                                                        disabled={isSubmitting}
+                                                        type="email"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Password
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="******"
+                                                        disabled={isSubmitting}
+                                                        type="password"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="newPassword"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    New Password
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="******"
+                                                        disabled={isSubmitting}
+                                                        type="password"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </>
+                            )}
                             <FormField
                                 control={form.control}
                                 name="role"
@@ -193,6 +198,32 @@ const SettingsPage = () => {
                                     </FormItem>
                                 )}
                             />
+                            {user?.isOAuth === false && (
+                                <FormField
+                                    control={form.control}
+                                    name="isTwoFactorEnabled"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg p-3 shadow-sm">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>Two Factor Authentication</FormLabel>
+                                                <FormDescription>
+                                                    Enable two factor authentication for your account
+                                                </FormDescription>
+
+                                            </div>
+
+                                            <FormControl>
+                                                <Switch
+                                                    disabled={isSubmitting}
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                         </div>
                         <FromError message={error} />
                         <FromSuccess message={success} />
