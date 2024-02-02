@@ -1,52 +1,54 @@
 "use client";
+
 import * as z from "zod";
+import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { NewPasswordSchema } from "@/schemas";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { FromError } from "../form-error";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
-  FormLabel,
   FormField,
   FormItem,
-  FormMessage,
-
-} from "../ui/form";
-import { CardWrapper } from "./card-wrapper"
-import { FromSuccess } from "../form-success";
+  FormLabel,
+  FormMessage,  
+} from "@/components/ui/form";
+import { CardWrapper } from "@/components/auth/card-wrapper"
+import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 import { newPassword } from "@/actions/new-password";
+
 export const NewPasswordForm = () => {
-    const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [isPending, starTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
       password: "",
-    }
-  })
-  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
-    setError("")
-    setSuccess("")
-    starTransition(() => {
-      newPassword(values,token)
-      .then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success)
-      }
-      )
-    });
-  }
-  
+    },
+  });
 
+  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
+    setError("");
+    setSuccess("");
+
+    startTransition(() => {
+      newPassword(values, token)
+        .then((data) => {
+          setError(data?.error);
+          setSuccess(data?.success);
+        });
+    });
+  };
 
   return (
     <CardWrapper
@@ -55,8 +57,8 @@ export const NewPasswordForm = () => {
       backButtonHref="/auth/login"
     >
       <Form {...form}>
-        <form onSubmit={
-          form.handleSubmit((onSubmit))}
+        <form 
+          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6"
         >
           <div className="space-y-4">
@@ -74,16 +76,22 @@ export const NewPasswordForm = () => {
                       type="password"
                     />
                   </FormControl>
-                  <FormMessage/>
-                </FormItem >
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </div>
-          <FromError message={error}/>
-          <FromSuccess message={success}/>
-          <Button disabled={isPending} type="submit" className="w-full" >Reset password</Button>
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full"
+          >
+            Reset password
+          </Button>
         </form>
       </Form>
     </CardWrapper>
-  )
-}
+  );
+};

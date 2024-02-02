@@ -1,67 +1,67 @@
 "use client";
-import * as z from "zod";
 
+import * as z from "zod";
 import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { RegisterSchema } from "@/schemas";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { FromError } from "../form-error";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
-  FormLabel,
   FormField,
   FormItem,
-  FormMessage,
-
-} from "../ui/form";
-import { CardWrapper } from "./card-wrapper"
-import { FromSuccess } from "../form-success";
+  FormLabel,
+  FormMessage,  
+} from "@/components/ui/form";
+import { CardWrapper } from "@/components/auth/card-wrapper"
+import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 import { register } from "@/actions/register";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [isPending, starTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
       name: "",
-    }
-  })
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    setError("")
-    setSuccess("")
-    starTransition(() => {
-      register(values)
-      .then((data) => {
-        setError(data.error);
-        setSuccess(data.success)
-      }
-      )
-    });
-  }
-  
+    },
+  });
 
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+    setError("");
+    setSuccess("");
+    
+    startTransition(() => {
+      register(values)
+        .then((data) => {
+          setError(data.error);
+          setSuccess(data.success);
+        });
+    });
+  };
 
   return (
     <CardWrapper
-      headerLabel="Create an New Account"
-      backButtonLabel="Already Have an account?"
+      headerLabel="Create an account"
+      backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
       showSocial
     >
       <Form {...form}>
-        <form onSubmit={
-          form.handleSubmit((onSubmit))}
+        <form 
+          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6"
         >
           <div className="space-y-4">
-          <FormField
+            <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
@@ -71,11 +71,11 @@ export const RegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="Username"
+                      placeholder="John Doe"
                     />
                   </FormControl>
-                  <FormMessage/>
-                </FormItem >
+                  <FormMessage />
+                </FormItem>
               )}
             />
             <FormField
@@ -92,8 +92,8 @@ export const RegisterForm = () => {
                       type="email"
                     />
                   </FormControl>
-                  <FormMessage/>
-                </FormItem >
+                  <FormMessage />
+                </FormItem>
               )}
             />
             <FormField
@@ -106,20 +106,26 @@ export const RegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="********"
+                      placeholder="******"
                       type="password"
                     />
                   </FormControl>
-                  <FormMessage/>
-                </FormItem >
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </div>
-          <FromError message={error}/>
-          <FromSuccess message={success}/>
-          <Button disabled={isPending} type="submit" className="w-full" >Create an account</Button>
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full"
+          >
+            Create an account
+          </Button>
         </form>
       </Form>
     </CardWrapper>
-  )
-}
+  );
+};
